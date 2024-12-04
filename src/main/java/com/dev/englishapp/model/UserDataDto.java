@@ -1,0 +1,11 @@
+package com.dev.englishapp.model;
+
+import lombok.Data;
+
+@Data
+public class UserDataDto {
+    private String username;
+    private String email;
+    private String password;
+
+}

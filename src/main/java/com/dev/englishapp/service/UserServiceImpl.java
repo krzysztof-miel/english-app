@@ -1,7 +1,11 @@
 package com.dev.englishapp.service;
 
 import com.dev.englishapp.entity.User;
+import com.dev.englishapp.exception.UserAlreadyExistsException;
+import com.dev.englishapp.exception.UserNotFoundException;
+import com.dev.englishapp.model.UserDataDto;
 import com.dev.englishapp.model.UserDto;
+import com.dev.englishapp.model.UserPreferencesDto;
 import com.dev.englishapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername()) || userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("User with the same username or email already exists.");
+            throw new UserAlreadyExistsException("User with the same username or email already exists.");
         }
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
@@ -37,25 +41,55 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.map(this::mapToDto)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
     }
 
     @Override
     public UserDto updateUser(Long id, User updatedUser) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
 
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
         user.setPassword(updatedUser.getPassword());
+
+        user.setWordCountPreference(updatedUser.getWordCountPreference());
+        user.setTimePreference(updatedUser.getTimePreference());
+
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
     }
 
     @Override
+    public UserPreferencesDto updateUserPreferences(Long id, UserPreferencesDto preferences) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        user.setWordCountPreference(preferences.getWordCountPreference());
+        user.setTimePreference(preferences.getTimePreference());
+
+        userRepository.save(user);
+        return preferences;
+    }
+
+    @Override
+    public UserDataDto updateUserData(Long id, UserDataDto data) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        user.setUsername(data.getUsername());
+        user.setEmail(data.getEmail());
+        user.setPassword(data.getPassword());
+
+
+        userRepository.save(user);
+        return data;
+    }
+
+    @Override
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("User not found.");
+            throw new UserNotFoundException("User not found.");
         }
         userRepository.deleteById(id);
     }
@@ -65,6 +99,8 @@ public class UserServiceImpl implements UserService {
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
+        userDto.setTimePreference(user.getTimePreference());
+        userDto.setWordCountPreference(user.getWordCountPreference());
         return userDto;
     }
 }

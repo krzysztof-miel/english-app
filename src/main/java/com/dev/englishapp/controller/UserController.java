@@ -2,9 +2,13 @@ package com.dev.englishapp.controller;
 
 
 import com.dev.englishapp.entity.User;
+import com.dev.englishapp.model.UserDataDto;
 import com.dev.englishapp.model.UserDto;
+import com.dev.englishapp.model.UserPreferencesDto;
 import com.dev.englishapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,27 +21,44 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public UserDto createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<UserDto> createUser(@RequestBody User user) {
+        UserDto createdUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @GetMapping
-    public List<UserDto> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        UserDto user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
-    public UserDto updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        return userService.updateUser(id, updatedUser);
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        UserDto updated = userService.updateUser(id, updatedUser);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{id}/preferences")
+    public ResponseEntity<UserPreferencesDto> updateUserPreferences(@PathVariable Long id, @RequestBody UserPreferencesDto preferences) {
+        UserPreferencesDto updatedPreferences = userService.updateUserPreferences(id, preferences);
+        return ResponseEntity.ok(updatedPreferences);
+    }
+
+    @PutMapping("/{id}/data")
+    public ResponseEntity<UserDataDto> updateUserData(@PathVariable Long id, @RequestBody UserDataDto data) {
+        UserDataDto updatedUserData = userService.updateUserData(id, data);
+        return ResponseEntity.ok(updatedUserData);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }

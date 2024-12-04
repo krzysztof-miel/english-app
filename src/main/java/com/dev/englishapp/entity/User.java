@@ -23,10 +23,16 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-//    private LocalTime preferredTime;
-//
-//    private int wordCountPreference;
+    private LocalTime timePreference;
 
+    private Integer wordCountPreference;
 
+    public void setWordCountPreference(int wordCountPreference) {
+        if (wordCountPreference == 5 || wordCountPreference == 8 || wordCountPreference == 10) {
+            this.wordCountPreference = wordCountPreference;
+        } else {
+            throw new IllegalArgumentException("Word count preference must be 5, 8, or 10.");
+        }
+    }
 
 }
