@@ -6,6 +6,7 @@ import com.dev.englishapp.model.UserDataDto;
 import com.dev.englishapp.model.UserDto;
 import com.dev.englishapp.model.UserPreferencesDto;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -17,5 +18,6 @@ public interface UserService {
     UserPreferencesDto updateUserPreferences(Long id, UserPreferencesDto preferences);
     UserDataDto updateUserData(Long id, UserDataDto data);
     void deleteUser(Long id);
+    String getOpenAiResponseForUser(Long id) throws IOException;
 
 }
