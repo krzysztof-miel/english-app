@@ -2,7 +2,7 @@ package com.dev.englishapp.controller;
 
 
 import com.dev.englishapp.entity.User;
-import com.dev.englishapp.model.UserDataDto;
+import com.dev.englishapp.entity.UserPreferences;
 import com.dev.englishapp.model.UserDto;
 import com.dev.englishapp.model.UserPreferencesDto;
 import com.dev.englishapp.service.UserService;
@@ -46,16 +46,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}/preferences")
-    public ResponseEntity<UserPreferencesDto> updateUserPreferences(@PathVariable Long id, @RequestBody UserPreferencesDto preferences) {
-        UserPreferencesDto updatedPreferences = userService.updateUserPreferences(id, preferences);
+    public ResponseEntity<UserPreferencesDto> setUserPreferences(@PathVariable Long id, @RequestBody UserPreferences preferences) {
+        UserPreferencesDto updatedPreferences = userService.setUserPreferences(id, preferences);
         return ResponseEntity.ok(updatedPreferences);
     }
 
-    @PutMapping("/{id}/data")
-    public ResponseEntity<UserDataDto> updateUserData(@PathVariable Long id, @RequestBody UserDataDto data) {
-        UserDataDto updatedUserData = userService.updateUserData(id, data);
-        return ResponseEntity.ok(updatedUserData);
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {

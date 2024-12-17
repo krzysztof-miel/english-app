@@ -3,7 +3,6 @@ package com.dev.englishapp.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalTime;
 
 @Data
 @Entity
@@ -23,16 +22,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private LocalTime timePreference;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "preferences_id", referencedColumnName = "id")
+    private UserPreferences preferences;
 
-    private Integer wordCountPreference;
-
-    public void setWordCountPreference(int wordCountPreference) {
-        if (wordCountPreference == 5 || wordCountPreference == 8 || wordCountPreference == 10) {
-            this.wordCountPreference = wordCountPreference;
-        } else {
-            throw new IllegalArgumentException("Word count preference must be 5, 8, or 10.");
-        }
-    }
 
 }

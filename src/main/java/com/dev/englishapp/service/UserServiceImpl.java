@@ -1,13 +1,14 @@
 package com.dev.englishapp.service;
 
 import com.dev.englishapp.entity.User;
+import com.dev.englishapp.entity.UserPreferences;
 import com.dev.englishapp.exception.UserAlreadyExistsException;
 import com.dev.englishapp.exception.UserNotFoundException;
-import com.dev.englishapp.model.UserDataDto;
 import com.dev.englishapp.model.UserDto;
 import com.dev.englishapp.model.UserPreferencesDto;
 import com.dev.englishapp.openAiClient.OpenAiClient;
 import com.dev.englishapp.openAiClient.Prompt;
+import com.dev.englishapp.repository.UserPreferencesRepository;
 import com.dev.englishapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private UserPreferencesRepository userPreferencesRepository;
+
+    @Autowired
     private OpenAiClient openAiClient;
 
     @Override
@@ -32,21 +36,21 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException("User with the same username or email already exists.");
         }
         User savedUser = userRepository.save(user);
-        return mapToDto(savedUser);
+        return mapToUserDto(savedUser);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(this::mapToDto)
+                .map(this::mapToUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserDto getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.map(this::mapToDto)
+        return user.map(this::mapToUserDto)
                 .orElseThrow(() -> new UserNotFoundException("User not found."));
     }
 
@@ -59,37 +63,31 @@ public class UserServiceImpl implements UserService {
         user.setEmail(updatedUser.getEmail());
         user.setPassword(updatedUser.getPassword());
 
-        user.setWordCountPreference(updatedUser.getWordCountPreference());
-        user.setTimePreference(updatedUser.getTimePreference());
-
         User savedUser = userRepository.save(user);
-        return mapToDto(savedUser);
+        return mapToUserDto(savedUser);
     }
 
     @Override
-    public UserPreferencesDto updateUserPreferences(Long id, UserPreferencesDto preferences) {
+    public UserPreferencesDto setUserPreferences(Long id, UserPreferences preferences) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found."));
 
-        user.setWordCountPreference(preferences.getWordCountPreference());
-        user.setTimePreference(preferences.getTimePreference());
+        UserPreferences userPreferences = user.getPreferences();
+
+        if (userPreferences == null) {
+            System.out.println("UStawiam preferencje");
+            userPreferences = new UserPreferences();
+            userPreferences.setTimePreference(preferences.getTimePreference());
+            userPreferences.setWordCountPreference(preferences.getWordCountPreference());
+        }
+
+        userPreferences.setTimePreference(preferences.getTimePreference());
+        userPreferences.setWordCountPreference(preferences.getWordCountPreference());
+
+        user.setPreferences(userPreferences);
 
         userRepository.save(user);
-        return preferences;
-    }
-
-    @Override
-    public UserDataDto updateUserData(Long id, UserDataDto data) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found."));
-
-        user.setUsername(data.getUsername());
-        user.setEmail(data.getEmail());
-        user.setPassword(data.getPassword());
-
-
-        userRepository.save(user);
-        return data;
+        return mapToUserPreferencesDto(userPreferences);
     }
 
     @Override
@@ -105,7 +103,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found."));
 
-        int userPreferenceNumber = user.getWordCountPreference();
+        int userPreferenceNumber = user.getPreferences().getWordCountPreference();
         String promptWithPreference;
 
         switch (userPreferenceNumber) {
@@ -123,18 +121,22 @@ public class UserServiceImpl implements UserService {
                 break;
         }
 
-//        OpenAiClient client = new OpenAiClient();
-
         return openAiClient.getResponse(promptWithPreference);
     }
 
-    private UserDto mapToDto(User user) {
+    private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
-        userDto.setTimePreference(user.getTimePreference());
-        userDto.setWordCountPreference(user.getWordCountPreference());
+        userDto.setPreferences(user.getPreferences());
         return userDto;
+    }
+
+    private UserPreferencesDto mapToUserPreferencesDto(UserPreferences userPreferences){
+        UserPreferencesDto userPreferencesDto = new UserPreferencesDto();
+        userPreferencesDto.setTimePreference(userPreferences.getTimePreference());
+        userPreferencesDto.setWordCountPreference(userPreferences.getWordCountPreference());
+        return userPreferencesDto;
     }
 }

@@ -1,7 +1,7 @@
 package com.dev.englishapp.model;
 
+import com.dev.englishapp.entity.UserPreferences;
 import lombok.Data;
-import java.time.LocalTime;
 
 @Data
 public class UserDto {
@@ -9,7 +9,6 @@ public class UserDto {
     private Long id;
     private String username;
     private String email;
-    private Integer wordCountPreference;
-    private LocalTime timePreference;
+    private UserPreferences preferences;
 
 }
