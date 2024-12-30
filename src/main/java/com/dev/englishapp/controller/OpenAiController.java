@@ -2,6 +2,7 @@ package com.dev.englishapp.controller;
 
 import com.dev.englishapp.openAiClient.OpenAiClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class OpenAiController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/ask")
     public ResponseEntity<String> getChatResponse(@RequestBody Map<String, String> payload) throws IOException {
         String prompt = payload.get("prompt");

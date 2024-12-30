@@ -13,6 +13,7 @@ public class EnglishappApplication {
 		Dotenv dotenv = Dotenv.configure().load();
 		System.setProperty("OPENAI_URL", dotenv.get("OPENAI_URL"));
 		System.setProperty("OPENAI_KEY", dotenv.get("OPENAI_KEY"));
+		System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
 
 		SpringApplication.run(EnglishappApplication.class, args);
 

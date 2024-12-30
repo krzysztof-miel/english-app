@@ -11,6 +11,7 @@ import com.dev.englishapp.openAiClient.Prompt;
 import com.dev.englishapp.repository.UserPreferencesRepository;
 import com.dev.englishapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OpenAiClient openAiClient;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDto createUser(User user) {
@@ -61,7 +65,8 @@ public class UserServiceImpl implements UserService {
 
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
-        user.setPassword(updatedUser.getPassword());
+        user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+//        user.setPassword(updatedUser.getPassword());
 
         User savedUser = userRepository.save(user);
         return mapToUserDto(savedUser);

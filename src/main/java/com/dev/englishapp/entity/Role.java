@@ -1,2 +1,16 @@
-package com.dev.englishapp.entity;public class Role {
+package com.dev.englishapp.entity;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "roles")
+public class Role {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+
 }
