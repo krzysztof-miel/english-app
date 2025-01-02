@@ -13,8 +13,11 @@ import com.dev.englishapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,9 +62,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long id, User updatedUser) {
+    public UserDto updateUser(Long id, User updatedUser) throws AccessDeniedException {
+
+        String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(loggedInUsername);
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        if (!user.getEmail().equals(loggedInUsername)) {
+            throw new AccessDeniedException("You are not allowed to update this user's data.");
+        }
 
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());

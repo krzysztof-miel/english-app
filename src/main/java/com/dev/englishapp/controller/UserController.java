@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody User updatedUser) throws AccessDeniedException {
         UserDto updated = userService.updateUser(id, updatedUser);
         return ResponseEntity.ok(updated);
     }
