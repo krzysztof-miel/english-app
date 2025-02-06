@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/openai/**").hasRole("ADMIN")
                         .requestMatchers("/users/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/users/me").authenticated()
                         .anyRequest().authenticated()
                 ).exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)

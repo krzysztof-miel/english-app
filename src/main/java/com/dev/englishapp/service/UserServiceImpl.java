@@ -140,6 +140,42 @@ public class UserServiceImpl implements UserService {
         return openAiClient.getResponse(promptWithPreference);
     }
 
+    @Override
+    public UserDto getCurrentUser(String email) {
+        System.out.println(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        return mapToUserDto(user);
+    }
+
+    @Override
+    public String generateWordsUsingJWT(String userEmail) throws IOException {
+        System.out.println(userEmail);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        int userPreferenceNumber = user.getPreferences().getWordCountPreference();
+        String promptWithPreference;
+
+        switch (userPreferenceNumber) {
+            case 8:
+                promptWithPreference = Prompt.EIGHT.getPrompt();
+                System.out.println(promptWithPreference);
+                break;
+            case 10:
+                promptWithPreference = Prompt.TEN.getPrompt();
+                System.out.println(promptWithPreference);
+                break;
+            default:
+                promptWithPreference = Prompt.FIVE.getPrompt();
+                System.out.println(promptWithPreference);
+                break;
+        }
+
+        return openAiClient.getResponse(promptWithPreference);
+    }
+
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
@@ -155,4 +191,7 @@ public class UserServiceImpl implements UserService {
         userPreferencesDto.setWordCountPreference(userPreferences.getWordCountPreference());
         return userPreferencesDto;
     }
+
+
+
 }

@@ -19,4 +19,8 @@ public interface UserService {
     void deleteUser(Long id);
     String getOpenAiResponseForUser(Long id) throws IOException;
 
+    String generateWordsUsingJWT(String userEmail) throws IOException;
+
+    UserDto getCurrentUser(String email);
+
 }
