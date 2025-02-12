@@ -73,6 +73,13 @@ public class UserController {
         return ResponseEntity.ok(generatedWords);
     }
 
+    @PostMapping("/preferences")
+    public ResponseEntity<UserPreferencesDto> updateUserPreferences(@RequestBody UserPreferencesDto preferencesDto, Authentication authentication) {
+
+        UserPreferencesDto updatedPreferences = userService.updateUserPreferenceUsingJWT(authentication.getName(), preferencesDto);
+        return ResponseEntity.ok(updatedPreferences);
+    }
+
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser(Authentication authentication) {
         UserDto userDto = userService.getCurrentUser(authentication.getName());

@@ -176,6 +176,27 @@ public class UserServiceImpl implements UserService {
         return openAiClient.getResponse(promptWithPreference);
     }
 
+    @Override
+    public UserPreferencesDto updateUserPreferenceUsingJWT(String userEmail, UserPreferencesDto preferencesDto) {
+        System.out.println(userEmail);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        UserPreferences preferences = user.getPreferences();
+        if (preferences == null) {
+            preferences = new UserPreferences();
+            user.setPreferences(preferences);
+        }
+
+        preferences.setTimePreference(preferencesDto.getTimePreference());
+        preferences.setWordCountPreference(preferencesDto.getWordCountPreference());
+
+        userRepository.save(user);
+
+        return mapToUserPreferencesDto(preferences);
+
+    }
+
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());

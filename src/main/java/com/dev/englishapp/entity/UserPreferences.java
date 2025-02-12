@@ -24,6 +24,7 @@ public class UserPreferences {
         if (wordCountPreference == 5 || wordCountPreference == 8 || wordCountPreference == 10) {
             this.wordCountPreference = wordCountPreference;
         } else {
+            this.wordCountPreference =5;
             throw new IllegalArgumentException("Word count preference must be 5, 8, or 10.");
         }
     }

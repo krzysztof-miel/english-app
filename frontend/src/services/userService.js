@@ -1,18 +1,4 @@
-// import api from './authService';
 
-// class UserService {
-//   async getCurrentUser() {
-//     const response = await api.get('/users/me');
-//     return response.data;
-//   }
-
-//   async updateUserPreferences(userId, preferences) {
-//     const response = await api.post(`/users/${userId}/preferences`, preferences);
-//     return response.data;
-//   }
-// }
-
-// export const userService = new UserService();
 
 
 import axios from 'axios';
@@ -20,13 +6,13 @@ import axios from 'axios';
 class UserService {
   constructor() {
     this.api = axios.create({
-      baseURL: 'http://localhost:8080',  // bez /api dla endpointów użytkownika
+      baseURL: 'http://localhost:8080',  
       headers: {
         'Content-Type': 'application/json'
       }
     });
 
-    // Dodajemy interceptor do automatycznego dodawania tokenu
+    
     this.api.interceptors.request.use(
       (config) => {
         console.log('Preparing request:', config.url);
@@ -42,7 +28,7 @@ class UserService {
       }
     );
 
-    // Dodajemy interceptor do obsługi odpowiedzi
+  
     this.api.interceptors.response.use(
       (response) => {
         console.log('Response received:', response);
@@ -77,6 +63,7 @@ class UserService {
       throw error;
     }
   }
+
   async generateWords() {
     try {
       console.log('Generating words...');
@@ -92,6 +79,19 @@ class UserService {
       throw error;
     }
   }
+
+  async updatePreferences(preferences) {
+    try {
+      console.log('Updating preferences:', preferences);
+      const response = await this.api.post('/users/preferences', preferences);
+      console.log('Preferences updated:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating preferences:', error);
+      throw error;
+    }
+  }
+
 }
 
 export const userService = new UserService();

@@ -21,6 +21,8 @@ public interface UserService {
 
     String generateWordsUsingJWT(String userEmail) throws IOException;
 
+    UserPreferencesDto updateUserPreferenceUsingJWT(String userEmail, UserPreferencesDto preferencesDto);
+
     UserDto getCurrentUser(String email);
 
 }
