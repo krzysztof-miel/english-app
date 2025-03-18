@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Auth from './components/Auth';
 import UserProfile from './components/UserProfile';
+import LearningSession from './components/LearningSession';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
@@ -15,6 +16,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/learning-session"
+            element={
+              <ProtectedRoute>
+                <LearningSession />
               </ProtectedRoute>
             }
           />
